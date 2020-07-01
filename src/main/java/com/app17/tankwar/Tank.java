@@ -82,21 +82,21 @@ public class Tank {
         String prefix = enemy ? "e" : "";
         switch (direction) {
             case UP:
-                return new ImageIcon("assets/images/" + prefix + "tankU.gif").getImage();
+                return  Tools.getImage(prefix+"tankU.gif");
             case DOWN:
-                return new ImageIcon("assets/images/" + prefix + "tankD.gif").getImage();
+                return  Tools.getImage(prefix+"tankD.gif");
             case LEFT:
-                return new ImageIcon("assets/images/" + prefix + "tankL.gif").getImage();
+                return  Tools.getImage(prefix+"tankL.gif");
             case RIGHT:
-                return new ImageIcon("assets/images/" + prefix + "tankR.gif").getImage();
+                return  Tools.getImage(prefix+"tankR.gif");
             case UP_RIGHT:
-                return new ImageIcon("assets/images/" + prefix + "tankRU.gif").getImage();
+                return  Tools.getImage(prefix+"tankRU.gif");
             case UP_LEFT:
-                return new ImageIcon("assets/images/" + prefix + "tankLU.gif").getImage();
+                return  Tools.getImage(prefix+"tankLU.gif");
             case DOWN_LEFT:
-                return new ImageIcon("assets/images/" + prefix + "tankLD.gif").getImage();
+                return  Tools.getImage(prefix+"tankLD.gif");
             case DOWN_RIGHT:
-                return new ImageIcon("assets/images/" + prefix + "tankRD.gif").getImage();
+                return  Tools.getImage(prefix+"tankRD.gif");
         }
 
         return null;
