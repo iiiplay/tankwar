@@ -1,6 +1,5 @@
 package com.app17.tankwar;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
@@ -82,21 +81,21 @@ public class Tank {
         String prefix = enemy ? "e" : "";
         switch (direction) {
             case UP:
-                return  Tools.getImage(prefix+"tankU.gif");
+                return Tools.getImage(prefix + "tankU.gif");
             case DOWN:
-                return  Tools.getImage(prefix+"tankD.gif");
+                return Tools.getImage(prefix + "tankD.gif");
             case LEFT:
-                return  Tools.getImage(prefix+"tankL.gif");
+                return Tools.getImage(prefix + "tankL.gif");
             case RIGHT:
-                return  Tools.getImage(prefix+"tankR.gif");
+                return Tools.getImage(prefix + "tankR.gif");
             case UP_RIGHT:
-                return  Tools.getImage(prefix+"tankRU.gif");
+                return Tools.getImage(prefix + "tankRU.gif");
             case UP_LEFT:
-                return  Tools.getImage(prefix+"tankLU.gif");
+                return Tools.getImage(prefix + "tankLU.gif");
             case DOWN_LEFT:
-                return  Tools.getImage(prefix+"tankLD.gif");
+                return Tools.getImage(prefix + "tankLD.gif");
             case DOWN_RIGHT:
-                return  Tools.getImage(prefix+"tankRD.gif");
+                return Tools.getImage(prefix + "tankRD.gif");
         }
 
         return null;
@@ -148,6 +147,18 @@ public class Tank {
     void draw(Graphics g) {
         determineDirection();
         move();
+        if (x < 0) {
+            x = 0;
+        } else if (x > 800 - this.getImage().getWidth(null)) {
+            x = 800 - this.getImage().getWidth(null);
+        }
+
+        if (y < 0) {
+            y = 0;
+        } else if (y > 600 - this.getImage().getHeight(null)) {
+            y = 600 - this.getImage().getHeight(null);
+        }
+
         g.drawImage(this.getImage(), this.getX(), this.getY(), null);
     }
 
