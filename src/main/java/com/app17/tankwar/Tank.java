@@ -32,13 +32,7 @@ public class Tank {
         return y;
     }
 
-    public void setX(int x) {
-        this.x = x;
-    }
 
-    public void setY(int y) {
-        this.y = y;
-    }
 
 
     void move() {
@@ -145,6 +139,8 @@ public class Tank {
     }
 
     void draw(Graphics g) {
+        int oldX = x, oldY = y;
+
         determineDirection();
         move();
         if (x < 0) {
@@ -159,7 +155,30 @@ public class Tank {
             y = 600 - this.getImage().getHeight(null);
         }
 
+        Rectangle rec = getRectangle();
+        for (Wall wall : GameClient.getInstance().getWalls()) {
+            if (rec.intersects((wall.getRectangle()))) {
+                x = oldX;
+                y = oldY;
+                break;
+            }
+        }
+
+        for(Tank tank:GameClient.getInstance().getEnemyTanks()){
+            if (rec.intersects((tank.getRectangle()))) {
+                x = oldX;
+                y = oldY;
+                break;
+            }
+        }
+
         g.drawImage(this.getImage(), this.getX(), this.getY(), null);
+    }
+
+    //取得坦克區間
+    public Rectangle getRectangle() {
+        return new Rectangle(x, y, this.getImage().getWidth(null),
+                this.getImage().getHeight(null));
     }
 
     public void keyReleased(KeyEvent e) {

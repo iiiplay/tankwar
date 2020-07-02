@@ -10,11 +10,23 @@ public class Wall {
 
     private int bricks;
 
+    private final Image brickImage;
+
     public Wall(int x, int y, int bricks, boolean horizontal) {
+        this.brickImage = Tools.getImage("brick.png");
         this.x = x;
         this.y = y;
         this.horizontal = horizontal;
         this.bricks = bricks;
+    }
+
+
+    public Rectangle getRectangle() {
+        return horizontal ? new Rectangle(x, y, bricks * brickImage.getWidth(null),
+                brickImage.getHeight(null)) : new Rectangle(x, y, brickImage.getWidth(null),
+                brickImage.getHeight(null) * bricks);
+
+
     }
 
     public void draw(Graphics g) {
@@ -28,7 +40,7 @@ public class Wall {
         } else {
             for (int i = 0; i < bricks; i++) {
                 g.drawImage(brickImage, x,
-                        y + i*brickImage.getHeight(null), null);
+                        y + i * brickImage.getHeight(null), null);
             }
         }
     }
