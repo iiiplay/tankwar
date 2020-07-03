@@ -25,7 +25,10 @@ public class GameClient extends JComponent {
         return enemyTanks;
     }
 
-    ;
+    public List<Missile> getMissiles() {
+        return missiles;
+    }
+
 
     private Tank playerTank;
 
@@ -33,11 +36,14 @@ public class GameClient extends JComponent {
 
     private List<Wall> walls;
 
+    private List<Missile> missiles;
+
     private GameClient() {
         this.setPreferredSize(new Dimension(800, 600));
         this.playerTank = new Tank(400, 100, Direction.DOWN);
+        this.missiles = new ArrayList<>();
 
-        enemyTanks = new ArrayList<>(12);
+        this.enemyTanks = new ArrayList<>(12);
 
         //將陣列轉換成集合
         walls = Arrays.asList(
@@ -65,13 +71,16 @@ public class GameClient extends JComponent {
         for (Wall wall : walls) {
             wall.draw(g);
         }
+        for(Missile missile:missiles){
+            missile.draw(g);
+        }
     }
 
     public static void main(String[] args) {
         JFrame frame = new JFrame();
         frame.setTitle("來了!第一個坦克大戰!!");
         frame.setIconImage(new ImageIcon("assets/images/icon.png").getImage());
-        GameClient client = new GameClient();
+        GameClient client = GameClient.getInstance();
         frame.repaint();
         frame.add(client);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
