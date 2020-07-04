@@ -39,6 +39,7 @@ public class GameClient extends JComponent {
     private List<Missile> missiles;
 
     private GameClient() {
+        com.sun.javafx.application.PlatformImpl.startup(()->{});
         this.setPreferredSize(new Dimension(800, 600));
         this.playerTank = new Tank(400, 100, Direction.DOWN);
         this.missiles = new ArrayList<>();
