@@ -39,7 +39,7 @@ public class GameClient extends JComponent {
     private List<Missile> missiles;
 
     private GameClient() {
-        com.sun.javafx.application.PlatformImpl.startup(()->{});
+
         this.setPreferredSize(new Dimension(800, 600));
         this.playerTank = new Tank(400, 100, Direction.DOWN);
         this.missiles = new ArrayList<>();
@@ -78,6 +78,7 @@ public class GameClient extends JComponent {
     }
 
     public static void main(String[] args) {
+        com.sun.javafx.application.PlatformImpl.startup(()->{});
         JFrame frame = new JFrame();
         frame.setTitle("來了!第一個坦克大戰!!");
         frame.setIconImage(new ImageIcon("assets/images/icon.png").getImage());
