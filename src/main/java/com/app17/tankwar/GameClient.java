@@ -13,6 +13,15 @@ public class GameClient extends JComponent {
     //取得GameClient實例
     private static final GameClient INSTANCE = new GameClient();
 
+    private Tank playerTank;
+
+    private List<Tank> enemyTanks;
+
+    private List<Wall> walls;
+
+    private List<Missile> missiles;
+
+
     public static GameClient getInstance() {
         return INSTANCE;
     }
@@ -28,15 +37,6 @@ public class GameClient extends JComponent {
     public List<Missile> getMissiles() {
         return missiles;
     }
-
-
-    private Tank playerTank;
-
-    private List<Tank> enemyTanks;
-
-    private List<Wall> walls;
-
-    private List<Missile> missiles;
 
     private GameClient() {
 

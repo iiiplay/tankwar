@@ -19,27 +19,7 @@ public class Missile {
     }
 
     private Image getImage() {
-        String prefix = "missile";
-        switch (direction) {
-            case UP:
-                return Tools.getImage("missileU.gif");
-            case DOWN:
-                return Tools.getImage("missileD.gif");
-            case LEFT:
-                return Tools.getImage("missileL.gif");
-            case RIGHT:
-                return Tools.getImage("missileR.gif");
-            case UP_RIGHT:
-                return Tools.getImage("missileRU.gif");
-            case UP_LEFT:
-                return Tools.getImage("missileLU.gif");
-            case DOWN_LEFT:
-                return Tools.getImage("missileLD.gif");
-            case DOWN_RIGHT:
-                return Tools.getImage("missileRD.gif");
-        }
-
-        return null;
+        return direction.getImage("missile");
     }
 
     void move() {
@@ -57,19 +37,19 @@ public class Missile {
             case RIGHT:
                 x += SPEED;
                 break;
-            case UP_RIGHT:
+            case RIGHT_UP:
                 y -= SPEED;
                 x += SPEED;
                 break;
-            case UP_LEFT:
+            case LEFT_UP:
                 y -= SPEED;
                 x -= SPEED;
                 break;
-            case DOWN_LEFT:
+            case LEFT_DOWN:
                 x -= SPEED;
                 y += SPEED;
                 break;
-            case DOWN_RIGHT:
+            case RIGHT_DOWN:
                 x += SPEED;
                 y += SPEED;
                 break;
