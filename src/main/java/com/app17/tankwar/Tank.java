@@ -10,13 +10,33 @@ import java.util.Random;
 
 public class Tank {
 
+    private static final int MOVE_SPEED = 5;
+
     private int x;
     private int y;
     private Direction direction;
     private boolean stopped;
-    private boolean enemy;
-    private static final int MOVE_SPEED = 5;
+    boolean enemy;
 
+    private boolean live=true;
+    private int hp = 100;
+
+
+    int getHp() {
+        return hp;
+    }
+
+    void setHp(int hp) {
+        this.hp = hp;
+    }
+
+    boolean isLive() {
+        return live;
+    }
+
+    void setLive(boolean live) {
+        this.live = live;
+    }
 
     public Tank(int x, int y, Direction direction) {
         this(x, y, direction, false);
@@ -29,6 +49,9 @@ public class Tank {
         this.enemy = enemy;
     }
 
+    public boolean isEnemy() {
+        return enemy;
+    }
 
     public int getX() {
         return x;
@@ -130,6 +153,12 @@ public class Tank {
     }
 
     void draw(Graphics g) {
+
+        if(!live){
+
+        }
+
+
         int oldX = x, oldY = y;
 
         determineDirection();
@@ -167,7 +196,7 @@ public class Tank {
     }
 
     //取得坦克區間
-    public Rectangle getRectangle() {
+    Rectangle getRectangle() {
         return new Rectangle(x, y, this.getImage().getWidth(null),
                 this.getImage().getHeight(null));
     }

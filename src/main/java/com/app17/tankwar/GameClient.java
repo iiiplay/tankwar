@@ -34,8 +34,16 @@ public class GameClient extends JComponent {
         return enemyTanks;
     }
 
+    public Tank getPlayerTank() {
+        return playerTank;
+    }
+
     public List<Missile> getMissiles() {
         return missiles;
+    }
+
+    synchronized void add(Missile missile) {
+        missiles.add(missile);
     }
 
     private GameClient() {
@@ -44,7 +52,6 @@ public class GameClient extends JComponent {
         this.playerTank = new Tank(400, 100, Direction.DOWN);
         this.missiles = new ArrayList<>();
 
-        this.enemyTanks = new ArrayList<>(12);
 
         //將陣列轉換成集合
         walls = Arrays.asList(
@@ -52,6 +59,14 @@ public class GameClient extends JComponent {
                 new Wall(200, 540, 15, true),
                 new Wall(100, 80, 15, false),
                 new Wall(700, 80, 15, false));
+
+
+        this.initEnemyTank();
+    }
+
+    private void initEnemyTank() {
+        this.enemyTanks = new ArrayList<>(12);
+
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 4; j++) {
@@ -66,19 +81,26 @@ public class GameClient extends JComponent {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, 800, 600);
         playerTank.draw(g);
+        enemyTanks.removeIf(t -> !t.isLive());
+        if(enemyTanks.isEmpty()){
+            this.initEnemyTank();
+        }
         for (Tank tank : enemyTanks) {
             tank.draw(g);
         }
         for (Wall wall : walls) {
             wall.draw(g);
         }
-        for(Missile missile:missiles){
+
+        missiles.removeIf(m -> !m.isLive());
+        for (Missile missile : missiles) {
             missile.draw(g);
         }
     }
 
     public static void main(String[] args) {
-        com.sun.javafx.application.PlatformImpl.startup(()->{});
+        com.sun.javafx.application.PlatformImpl.startup(() -> {
+        });
         JFrame frame = new JFrame();
         frame.setTitle("來了!第一個坦克大戰!!");
         frame.setIconImage(new ImageIcon("assets/images/icon.png").getImage());
