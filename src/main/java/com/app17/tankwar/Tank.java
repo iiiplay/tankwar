@@ -103,7 +103,7 @@ public class Tank {
             Missile missile = new Missile(x + getImage().getWidth(null) / 2 - 6,
                     y + getImage().getHeight(null) / 2 - 6, enemy, direction);
 
-            GameClient.getInstance().getMissiles().add(missile);
+            GameClient.getInstance().addMissile(missile);
         }
 
         String audioFile = new Random().nextBoolean() ? "supershoot.aiff" : "supershoot.wav";
@@ -115,7 +115,7 @@ public class Tank {
         Missile missile = new Missile(x + getImage().getWidth(null) / 2 - 6,
                 y + getImage().getHeight(null) / 2 - 6, enemy, direction);
 
-        GameClient.getInstance().getMissiles().add(missile);
+        GameClient.getInstance().addMissile(missile);
         Tools.playAudio("shoot.wav");
     }
 
@@ -144,14 +144,11 @@ public class Tank {
 
     void draw(Graphics g) {
 
-        if (!live) {
-
+        int oldX = x, oldY = y;
+        if (!this.enemy) {
+            this.determineDirection();
         }
 
-
-        int oldX = x, oldY = y;
-
-        determineDirection();
         move();
         if (x < 0) {
             x = 0;
@@ -174,12 +171,26 @@ public class Tank {
             }
         }
 
+
         for (Tank tank : GameClient.getInstance().getEnemyTanks()) {
-            if (rec.intersects((tank.getRectangle()))) {
+            if (tank != this && rec.intersects((tank.getRectangle()))) {
                 x = oldX;
                 y = oldY;
                 break;
             }
+        }
+
+        if(enemy && rec.intersects(GameClient.getInstance().getPlayerTank().getRectangle())){
+            x = oldX;
+            y = oldY;
+        }
+
+        if(!enemy){
+            g.setColor(Color.WHITE);
+            g.fillRect(x,y-10,this.getImage().getWidth(null),10);
+            g.setColor(Color.RED);
+            int width=hp*this.getImage().getWidth(null)/100;
+            g.fillRect(x,y-10,width,10);
         }
 
         g.drawImage(this.getImage(), this.getX(), this.getY(), null);
@@ -205,8 +216,26 @@ public class Tank {
             case KeyEvent.VK_RIGHT:
                 right = false;
                 break;
+            case KeyEvent.VK_F2:
+                GameClient.getInstance().restart();
 
         }
+    }
+
+    private final Random random = new Random();
+    private int step = random.nextInt(12) + 3;
+
+    void actRandomly() {
+        Direction[] dirs = Direction.values();
+
+        if (step == 0) {
+            step = random.nextInt(12) + 3;
+            this.direction = dirs[random.nextInt(dirs.length)];
+            if (random.nextBoolean()) {
+                this.fire();
+            }
+        }
+        step--;
     }
 }
 

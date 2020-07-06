@@ -7,6 +7,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class GameClient extends JComponent {
 
@@ -44,7 +45,7 @@ public class GameClient extends JComponent {
         return missiles;
     }
 
-    synchronized void add(Missile missile) {
+    void addMissile(Missile missile) {
         missiles.add(missile);
     }
 
@@ -56,8 +57,8 @@ public class GameClient extends JComponent {
 
         this.setPreferredSize(new Dimension(800, 600));
         this.playerTank = new Tank(400, 100, Direction.DOWN);
-        this.missiles = new ArrayList<>();
-        this.explosions = new ArrayList<>();
+        this.missiles = new CopyOnWriteArrayList<>();
+        this.explosions = new CopyOnWriteArrayList<>();
 
 
         //將陣列轉換成集合
@@ -72,7 +73,7 @@ public class GameClient extends JComponent {
     }
 
     private void initEnemyTank() {
-        this.enemyTanks = new ArrayList<>(12);
+        this.enemyTanks = new CopyOnWriteArrayList<>();
 
 
         for (int i = 0; i < 3; i++) {
@@ -87,7 +88,20 @@ public class GameClient extends JComponent {
     protected void paintComponent(Graphics g) {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, 800, 600);
+
+        if (!playerTank.isLive()) {
+            g.setFont(new Font(null, Font.BOLD, 100));
+            g.setColor(Color.RED);
+            g.drawString("GAME OVER", 100, 300);
+
+            g.setFont(new Font(null, Font.BOLD, 50));
+            g.setColor(Color.WHITE);
+            g.drawString("PRESS F2 TO RESTART", 100, 500);
+            return;
+
+        }
         playerTank.draw(g);
+
         enemyTanks.removeIf(t -> !t.isLive());
         if (enemyTanks.isEmpty()) {
             this.initEnemyTank();
@@ -139,11 +153,24 @@ public class GameClient extends JComponent {
 
         while (true) {
             client.repaint();
+
+            if (client.playerTank.isLive()) {
+                for (Tank tank : client.getEnemyTanks()) {
+                    tank.actRandomly();
+                }
+            }
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    void restart() {
+        if(!playerTank.isLive()){
+            playerTank = new Tank(400, 100, Direction.DOWN);
+            this.initEnemyTank();
         }
     }
 }
