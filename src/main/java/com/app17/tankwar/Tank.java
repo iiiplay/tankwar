@@ -1,11 +1,7 @@
 package com.app17.tankwar;
 
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.io.File;
 import java.util.Random;
 
 public class Tank {
@@ -18,7 +14,7 @@ public class Tank {
     private boolean stopped;
     boolean enemy;
 
-    private boolean live=true;
+    private boolean live = true;
     private int hp = 100;
 
 
@@ -112,13 +108,7 @@ public class Tank {
 
         String audioFile = new Random().nextBoolean() ? "supershoot.aiff" : "supershoot.wav";
 
-        playAudio(audioFile);
-    }
-
-    private void playAudio(String fileName) {
-        Media sound = new Media(new File("assets/audios/" + fileName).toURI().toString());
-        MediaPlayer mediaPlayer = new MediaPlayer(sound);
-        mediaPlayer.play();
+        Tools.playAudio(audioFile);
     }
 
     private void fire() {
@@ -126,7 +116,7 @@ public class Tank {
                 y + getImage().getHeight(null) / 2 - 6, enemy, direction);
 
         GameClient.getInstance().getMissiles().add(missile);
-        playAudio("shoot.wav");
+        Tools.playAudio("shoot.wav");
     }
 
 
@@ -154,7 +144,7 @@ public class Tank {
 
     void draw(Graphics g) {
 
-        if(!live){
+        if (!live) {
 
         }
 

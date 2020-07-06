@@ -21,6 +21,8 @@ public class GameClient extends JComponent {
 
     private List<Missile> missiles;
 
+    private List<Explosion> explosions;
+
 
     public static GameClient getInstance() {
         return INSTANCE;
@@ -46,11 +48,16 @@ public class GameClient extends JComponent {
         missiles.add(missile);
     }
 
+    void addExplosion(Explosion explosion) {
+        explosions.add(explosion);
+    }
+
     private GameClient() {
 
         this.setPreferredSize(new Dimension(800, 600));
         this.playerTank = new Tank(400, 100, Direction.DOWN);
         this.missiles = new ArrayList<>();
+        this.explosions = new ArrayList<>();
 
 
         //將陣列轉換成集合
@@ -82,7 +89,7 @@ public class GameClient extends JComponent {
         g.fillRect(0, 0, 800, 600);
         playerTank.draw(g);
         enemyTanks.removeIf(t -> !t.isLive());
-        if(enemyTanks.isEmpty()){
+        if (enemyTanks.isEmpty()) {
             this.initEnemyTank();
         }
         for (Tank tank : enemyTanks) {
@@ -95,6 +102,11 @@ public class GameClient extends JComponent {
         missiles.removeIf(m -> !m.isLive());
         for (Missile missile : missiles) {
             missile.draw(g);
+        }
+
+        explosions.removeIf(e -> !e.isLive());
+        for (Explosion explosion : explosions) {
+            explosion.draw(g);
         }
     }
 

@@ -11,7 +11,7 @@ public class Missile {
     private final Direction direction;
     private final boolean enemy;
 
-    private boolean live=true;
+    private boolean live = true;
 
     public boolean isLive() {
         return live;
@@ -40,14 +40,14 @@ public class Missile {
     public void draw(Graphics g) {
         move();
         if (x < 0 || x > 800 || y < 0 || y > 600) {
-            this.live=false;
+            this.live = false;
 
             return;
         }
 
         for (Wall wall : GameClient.getInstance().getWalls()) {
             if (this.getRectangle().intersects(wall.getRectangle())) {
-                this.live=false;
+                this.live = false;
 
                 return;
             }
@@ -56,29 +56,34 @@ public class Missile {
         if (enemy) {
             Tank playerTank = GameClient.getInstance().getPlayerTank();
             if (this.getRectangle().intersects(playerTank.getRectangle())) {
+                addExplosion();
                 playerTank.setHp(playerTank.getHp() - 20);
                 if (playerTank.getHp() <= 0) {
                     playerTank.setLive(false);
                 }
-                this.live=false;
+                this.live = false;
             }
 
         } else {
             for (Tank tank : GameClient.getInstance().getEnemyTanks()) {
                 if (this.getRectangle().intersects(tank.getRectangle())) {
+                    addExplosion();
                     tank.setLive(false);
-                    this.live=false;
+                    this.live = false;
 
                     break;
                 }
             }
         }
-
-
         g.drawImage(getImage(), x, y, null);
     }
 
     public Rectangle getRectangle() {
         return new Rectangle(x, y, getImage().getWidth(null), getImage().getHeight(null));
+    }
+
+    private void addExplosion() {
+        GameClient.getInstance().addExplosion(new Explosion(x, y));
+        Tools.playAudio("explode.wav");
     }
 }
