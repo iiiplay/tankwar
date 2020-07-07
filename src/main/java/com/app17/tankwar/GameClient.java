@@ -131,7 +131,7 @@ public class GameClient extends JComponent {
         g.drawImage(Tools.getImage("tree.png"), 720, 10, null);
         g.drawImage(Tools.getImage("tree.png"), 10, 520, null);
 
-        playerTank.draw(g);
+        playerTank.update(g);
 
         if (playerTank.isDying() && random.nextInt(3) == 1) {
             blood.setLive(true);
@@ -150,7 +150,7 @@ public class GameClient extends JComponent {
             this.initEnemyTank();
         }
         for (Tank tank : enemyTanks) {
-            tank.draw(g);
+            tank.update(g);
         }
         for (Wall wall : walls) {
             wall.update(g);
@@ -182,13 +182,13 @@ public class GameClient extends JComponent {
         frame.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                client.playerTank.keyPressed(e);
+                //client.playerTank.keyPressed(e);
 
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
-                client.playerTank.keyReleased(e);
+                //client.playerTank.keyReleased(e);
 
             }
         });
@@ -200,11 +200,7 @@ public class GameClient extends JComponent {
                 client.update();
                 client.repaint();
 
-                if (client.playerTank.isLive()) {
-                    for (Tank tank : client.getEnemyTanks()) {
-                        tank.actRandomly();
-                    }
-                }
+
                 Thread.sleep(50);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -214,7 +210,11 @@ public class GameClient extends JComponent {
 
     void update() {
 
-
+        if (playerTank.isLive()) {
+            for (Tank tank : getEnemyTanks()) {
+                tank.actRandomly();
+            }
+        }
     }
 
     void restart() {
