@@ -6,6 +6,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -23,6 +24,8 @@ public class GameClient extends JComponent {
     private List<Missile> missiles;
 
     private List<Explosion> explosions;
+
+    private Blood blood;
 
     private final AtomicInteger enemyKilled = new AtomicInteger(0);
 
@@ -46,6 +49,10 @@ public class GameClient extends JComponent {
         return missiles;
     }
 
+    public Blood getBlood(){
+        return blood;
+    }
+
     void addMissile(Missile missile) {
         missiles.add(missile);
     }
@@ -60,14 +67,15 @@ public class GameClient extends JComponent {
         this.playerTank = new Tank(400, 100, Direction.DOWN);
         this.missiles = new CopyOnWriteArrayList<>();
         this.explosions = new CopyOnWriteArrayList<>();
+        this.blood=new Blood(400,250);
 
 
         //將陣列轉換成集合
         walls = Arrays.asList(
-                new Wall(200, 140, 15, true),
-                new Wall(200, 540, 15, true),
-                new Wall(100, 180, 15, false),
-                new Wall(700, 180, 15, false));
+                new Wall(280, 140, 12, true),
+                new Wall(280, 540, 12, true),
+                new Wall(100, 180, 12, false),
+                new Wall(700, 180, 12, false));
 
 
         this.initEnemyTank();
@@ -84,6 +92,7 @@ public class GameClient extends JComponent {
         }
     }
 
+    private final static Random random=new Random();
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -109,11 +118,20 @@ public class GameClient extends JComponent {
         g.drawString("Player Tank HP:" + playerTank.getHp(), 10, 90);
         g.drawString("Enemy Left:" + enemyTanks.size(), 10, 110);
         g.drawString("Enemy Killed:" + enemyKilled.get(), 10, 130);
-
-
-
+        g.drawImage(Tools.getImage("tree.png"),720,10,null);
+        g.drawImage(Tools.getImage("tree.png"),10,520,null);
 
         playerTank.draw(g);
+
+        if(playerTank.isDying() && random.nextInt(3)==1){
+            blood.setLive(true);
+        }
+
+        if(blood.isLive()){
+            blood.draw(g);
+        }
+
+
 
         int count = enemyTanks.size();
         enemyTanks.removeIf(t -> !t.isLive());

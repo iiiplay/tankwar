@@ -15,7 +15,8 @@ public class Tank {
     boolean enemy;
 
     private boolean live = true;
-    private int hp = 100;
+    private static final int MAX_HP = 100;
+    private int hp = MAX_HP;
 
 
     int getHp() {
@@ -70,6 +71,10 @@ public class Tank {
     Image getImage() {
         String prefix = enemy ? "e" : "";
         return direction.getImage(prefix + "tank");
+    }
+
+    boolean isDying(){
+        return hp<=MAX_HP*0.2;
     }
 
     private boolean up, down, left, right;
@@ -180,24 +185,50 @@ public class Tank {
             }
         }
 
-        if(enemy && rec.intersects(GameClient.getInstance().getPlayerTank().getRectangle())){
+        if (enemy && rec.intersects(GameClient.getInstance().getPlayerTank().getRectangle())) {
             x = oldX;
             y = oldY;
         }
 
-        if(!enemy){
+        if (!enemy) {
+            Blood blood=GameClient.getInstance().getBlood();
+            if (blood.isLive() && this.getRectangle().intersects(GameClient.getInstance().getBlood().getRectangle())) {
+                this.hp = MAX_HP;
+                Tools.playAudio("revive.wav");
+                blood.setLive(false);
+            }
+
+
             g.setColor(Color.WHITE);
-            g.fillRect(x,y-10,this.getImage().getWidth(null),10);
+            g.fillRect(x, y - 10, this.getImage().getWidth(null), 10);
             g.setColor(Color.RED);
-            int width=hp*this.getImage().getWidth(null)/100;
-            g.fillRect(x,y-10,width,10);
+            int width = hp * this.getImage().getWidth(null) / 100;
+            g.fillRect(x, y - 10, width, 10);
+            Image petImage = Tools.getImage("pet-camel.gif");
+            g.drawImage(petImage, this.x - petImage.getWidth(null) - DISTANCE_TO_PET, this.y, null);
         }
 
         g.drawImage(this.getImage(), this.getX(), this.getY(), null);
     }
 
+    private static final int DISTANCE_TO_PET = 4;
+
     //取得坦克區間
     Rectangle getRectangle() {
+        if (enemy) {
+            return new Rectangle(x, y, this.getImage().getWidth(null),
+                    this.getImage().getHeight(null));
+        } else {
+            Image petImage = Tools.getImage("pet-camel.gif");
+            int delta = petImage.getWidth(null) + DISTANCE_TO_PET;
+            return new Rectangle(x - delta, y,
+                    this.getImage().getWidth(null) + delta,
+                    this.getImage().getHeight(null));
+        }
+    }
+
+    //取得坦克主體區間
+    Rectangle getRectangleForHitDetection() {
         return new Rectangle(x, y, this.getImage().getWidth(null),
                 this.getImage().getHeight(null));
     }
