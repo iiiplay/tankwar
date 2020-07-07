@@ -1,35 +1,20 @@
 package com.app17.tankwar;
 
+import com.app17.tankwar.gameobject.GameObject;
+
 import java.awt.*;
 
-public class Missile {
+public class Missile extends GameObject {
     private static final int SPEED = 10;
-    private int x;
-    private int y;
 
-    //唯一方向性
-    private final Direction direction;
-    private final boolean enemy;
+    private Direction direction;
 
-    private boolean live = true;
-
-    boolean isLive() {
-        return live;
-    }
-
-    private void setLive(boolean live) {
-        this.live = live;
-    }
 
     Missile(int x, int y, boolean enemy, Direction direction) {
-        this.x = x;
-        this.y = y;
+        super(x, y, (Image) null);
         this.direction = direction;
         this.enemy = enemy;
-    }
-
-    private Image getImage() {
-        return direction.getImage("missile");
+        live = true;
     }
 
     void move() {
@@ -37,53 +22,67 @@ public class Missile {
         y += direction.yFactor * SPEED;
     }
 
-    void draw(Graphics g) {
+    public void addExplosion() {
+        GameClient.getInstance().addExplosion(new Explosion(x, y, GameClient.getInstance().explosionImg));
+        Tools.playAudio("explode.wav");
+    }
+
+
+    @Override
+    public void update(Graphics g) {
+        GameClient client = GameClient.getInstance();
         move();
         if (x < 0 || x > 800 || y < 0 || y > 600) {
-            this.live = false;
-
+            live = false;
             return;
         }
 
-        for (Wall wall : GameClient.getInstance().getWalls()) {
-            if (this.getRectangle().intersects(wall.getRectangle())) {
-                this.live = false;
-
-                return;
+        for (Wall wall : client.getWalls()) {
+            if (live && getRectangle().intersects(wall.getRectangle())) {
+                live = false;
+                break;
             }
         }
 
         if (enemy) {
-            Tank playerTank = GameClient.getInstance().getPlayerTank();
-            if (this.getRectangle().intersects(playerTank.getRectangleForHitDetection())) {
+            Tank playTank = client.getPlayerTank();
+            if (live && getRectangle().intersects(playTank.getRectangleForHitDetection())) {
                 addExplosion();
-                playerTank.setHp(playerTank.getHp() - 20);
-                if (playerTank.getHp() <= 0) {
-                    playerTank.setLive(false);
+                playTank.setHp(playTank.getHp() - 20);
+                if (playTank.getHp() <= 0) {
+                    playTank.setLive(false);
                 }
-                this.live = false;
+                live = false;
             }
-
         } else {
-            for (Tank tank : GameClient.getInstance().getEnemyTanks()) {
-                if (this.getRectangle().intersects(tank.getRectangleForHitDetection())) {
+            for (Tank tank : client.getEnemyTanks()) {
+                if (live && getRectangle().intersects(tank.getRectangleForHitDetection())) {
                     addExplosion();
                     tank.setLive(false);
-                    this.live = false;
-
+                    live = false;
                     break;
                 }
             }
         }
+
+        if (live) {
+            draw(g);
+        }
+
+    }
+
+    private Image getImage() {
+        return direction.getImage("missile");
+    }
+
+    @Override
+    public void draw(Graphics g) {
         g.drawImage(getImage(), x, y, null);
     }
 
-    private Rectangle getRectangle() {
+    @Override
+    public Rectangle getRectangle() {
         return new Rectangle(x, y, getImage().getWidth(null), getImage().getHeight(null));
     }
 
-    private void addExplosion() {
-        GameClient.getInstance().addExplosion(new Explosion(x, y));
-        Tools.playAudio("explode.wav");
-    }
 }

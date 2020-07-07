@@ -1,46 +1,40 @@
 package com.app17.tankwar;
 
+import com.app17.tankwar.gameobject.GameObject;
+
 import java.awt.*;
 
-public class Wall {
-    private int x;
-    private int y;
+public class Wall extends GameObject {
 
     private boolean horizontal;
-
     private int bricks;
 
-    private final Image brickImage;
-
-    public Wall(int x, int y, int bricks, boolean horizontal) {
-        this.brickImage = Tools.getImage("brick.png");
-        this.x = x;
-        this.y = y;
+    public Wall(int x, int y, Image image, int bricks, boolean horizontal) {
+        super(x, y, image);
         this.horizontal = horizontal;
         this.bricks = bricks;
+        live=true;
     }
 
 
     public Rectangle getRectangle() {
-        return horizontal ? new Rectangle(x, y, bricks * brickImage.getWidth(null),
-                brickImage.getHeight(null)) : new Rectangle(x, y, brickImage.getWidth(null),
-                brickImage.getHeight(null) * bricks);
-
-
+        return horizontal ? new Rectangle(x, y, bricks * width,
+                image.getHeight(null)) : new Rectangle(x, y, width,
+                height * bricks);
     }
 
+
     public void draw(Graphics g) {
-        Image brickImage = Tools.getImage("brick.png");
 
         if (horizontal) {
             for (int i = 0; i < bricks; i++) {
-                g.drawImage(brickImage, x + i * brickImage.getWidth(null),
+                g.drawImage(image, x + i * width,
                         y, null);
             }
         } else {
             for (int i = 0; i < bricks; i++) {
-                g.drawImage(brickImage, x,
-                        y + i * brickImage.getHeight(null), null);
+                g.drawImage(image, x,
+                        y + i * height, null);
             }
         }
     }

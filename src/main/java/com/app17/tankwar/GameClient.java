@@ -49,7 +49,7 @@ public class GameClient extends JComponent {
         return missiles;
     }
 
-    public Blood getBlood(){
+    public Blood getBlood() {
         return blood;
     }
 
@@ -61,21 +61,31 @@ public class GameClient extends JComponent {
         explosions.add(explosion);
     }
 
-    private GameClient() {
+    public Image bloodImg;
+    public Image[] explosionImg = new Image[11];
+    public Image wallImg;
+
+    public GameClient() {
+
+        bloodImg = Tools.getImage("blood.png");
+        for (int i = 0; i < explosionImg.length; i++) {
+            explosionImg[i] = Tools.getImage(i + ".gif");
+        }
+        wallImg = Tools.getImage("brick.png");
 
         this.setPreferredSize(new Dimension(800, 600));
         this.playerTank = new Tank(400, 100, Direction.DOWN);
         this.missiles = new CopyOnWriteArrayList<>();
         this.explosions = new CopyOnWriteArrayList<>();
-        this.blood=new Blood(400,250,Tools.getImage("blood.png"));
+        this.blood = new Blood(400, 250, bloodImg);
 
 
         //將陣列轉換成集合
         walls = Arrays.asList(
-                new Wall(280, 140, 12, true),
-                new Wall(280, 540, 12, true),
-                new Wall(100, 180, 12, false),
-                new Wall(700, 180, 12, false));
+                new Wall(280, 140, wallImg, 12, true),
+                new Wall(280, 540, wallImg, 12, true),
+                new Wall(100, 180, wallImg, 12, false),
+                new Wall(700, 180, wallImg, 12, false));
 
 
         this.initEnemyTank();
@@ -92,7 +102,7 @@ public class GameClient extends JComponent {
         }
     }
 
-    private final static Random random=new Random();
+    private final static Random random = new Random();
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -118,19 +128,18 @@ public class GameClient extends JComponent {
         g.drawString("Player Tank HP:" + playerTank.getHp(), 10, 90);
         g.drawString("Enemy Left:" + enemyTanks.size(), 10, 110);
         g.drawString("Enemy Killed:" + enemyKilled.get(), 10, 130);
-        g.drawImage(Tools.getImage("tree.png"),720,10,null);
-        g.drawImage(Tools.getImage("tree.png"),10,520,null);
+        g.drawImage(Tools.getImage("tree.png"), 720, 10, null);
+        g.drawImage(Tools.getImage("tree.png"), 10, 520, null);
 
         playerTank.draw(g);
 
-        if(playerTank.isDying() && random.nextInt(3)==1){
+        if (playerTank.isDying() && random.nextInt(3) == 1) {
             blood.setLive(true);
         }
 
-        if(blood.isLive()){
-            blood.draw(g);
+        if (blood.isLive()) {
+            blood.update(g);
         }
-
 
 
         int count = enemyTanks.size();
@@ -144,17 +153,17 @@ public class GameClient extends JComponent {
             tank.draw(g);
         }
         for (Wall wall : walls) {
-            wall.draw(g);
+            wall.update(g);
         }
 
         missiles.removeIf(m -> !m.isLive());
         for (Missile missile : missiles) {
-            missile.draw(g);
+            missile.update(g);
         }
 
         explosions.removeIf(e -> !e.isLive());
         for (Explosion explosion : explosions) {
-            explosion.draw(g);
+            explosion.update(g);
         }
     }
 
@@ -188,7 +197,9 @@ public class GameClient extends JComponent {
         while (true) {
             //主遊戲循環
             try {
+                client.update();
                 client.repaint();
+
                 if (client.playerTank.isLive()) {
                     for (Tank tank : client.getEnemyTanks()) {
                         tank.actRandomly();
@@ -199,6 +210,11 @@ public class GameClient extends JComponent {
                 e.printStackTrace();
             }
         }
+    }
+
+    void update() {
+
+
     }
 
     void restart() {

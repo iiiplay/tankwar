@@ -73,8 +73,8 @@ public class Tank {
         return direction.getImage(prefix + "tank");
     }
 
-    boolean isDying(){
-        return hp<=MAX_HP*0.2;
+    boolean isDying() {
+        return hp <= MAX_HP * 0.2;
     }
 
     private boolean up, down, left, right;
@@ -102,6 +102,7 @@ public class Tank {
 
         }
     }
+
 
     private void superFire() {
         for (Direction direction : Direction.values()) {
@@ -191,7 +192,7 @@ public class Tank {
         }
 
         if (!enemy) {
-            Blood blood=GameClient.getInstance().getBlood();
+            Blood blood = GameClient.getInstance().getBlood();
             if (blood.isLive() && this.getRectangle().intersects(GameClient.getInstance().getBlood().getRectangle())) {
                 this.hp = MAX_HP;
                 Tools.playAudio("revive.wav");
