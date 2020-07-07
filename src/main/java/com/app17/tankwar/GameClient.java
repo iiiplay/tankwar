@@ -67,7 +67,7 @@ public class GameClient extends JComponent {
         this.playerTank = new Tank(400, 100, Direction.DOWN);
         this.missiles = new CopyOnWriteArrayList<>();
         this.explosions = new CopyOnWriteArrayList<>();
-        this.blood=new Blood(400,250);
+        this.blood=new Blood(400,250,Tools.getImage("blood.png"));
 
 
         //將陣列轉換成集合
