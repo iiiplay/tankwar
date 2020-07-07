@@ -1,5 +1,7 @@
 package com.app17.tankwar;
 
+import com.app17.tankwar.gameobject.Client;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
@@ -10,7 +12,7 @@ import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class GameClient extends JComponent {
+public class GameClient extends Client {
 
     //取得GameClient實例
     private static final GameClient INSTANCE = new GameClient();
@@ -29,55 +31,30 @@ public class GameClient extends JComponent {
 
     private final AtomicInteger enemyKilled = new AtomicInteger(0);
 
-    public static GameClient getInstance() {
-        return INSTANCE;
-    }
-
-    public List<Wall> getWalls() {
-        return walls;
-    }
-
-    public List<Tank> getEnemyTanks() {
-        return enemyTanks;
-    }
-
-    public Tank getPlayerTank() {
-        return playerTank;
-    }
-
-    public List<Missile> getMissiles() {
-        return missiles;
-    }
-
-    public Blood getBlood() {
-        return blood;
-    }
-
-    void addMissile(Missile missile) {
-        missiles.add(missile);
-    }
-
-    void addExplosion(Explosion explosion) {
-        explosions.add(explosion);
-    }
+    private final static Random random = new Random();
 
     public Image bloodImg;
     public Image[] explosionImg = new Image[11];
     public Image wallImg;
+    public int fps=50;
 
     public GameClient() {
+        init();
+    }
 
+    @Override
+    public void init(){
         bloodImg = Tools.getImage("blood.png");
         for (int i = 0; i < explosionImg.length; i++) {
             explosionImg[i] = Tools.getImage(i + ".gif");
         }
-        wallImg = Tools.getImage("brick.png");
 
-        this.setPreferredSize(new Dimension(800, 600));
-        this.playerTank = new Tank(400, 100, Direction.DOWN);
-        this.missiles = new CopyOnWriteArrayList<>();
-        this.explosions = new CopyOnWriteArrayList<>();
-        this.blood = new Blood(400, 250, bloodImg);
+        wallImg = Tools.getImage("brick.png");
+        setPreferredSize(new Dimension(800, 600));
+        playerTank = new Tank(400, 100, Direction.DOWN);
+        missiles = new CopyOnWriteArrayList<>();
+        explosions = new CopyOnWriteArrayList<>();
+        blood = new Blood(400, 250, bloodImg);
 
 
         //將陣列轉換成集合
@@ -88,7 +65,7 @@ public class GameClient extends JComponent {
                 new Wall(700, 180, wallImg, 12, false));
 
 
-        this.initEnemyTank();
+        initEnemyTank();
     }
 
     private void initEnemyTank() {
@@ -102,10 +79,18 @@ public class GameClient extends JComponent {
         }
     }
 
-    private final static Random random = new Random();
+    @Override
+    public void keyPressed(KeyEvent e) {
+        playerTank.keyPressed(e);
+    }
 
     @Override
-    protected void paintComponent(Graphics g) {
+    public void keyReleased(KeyEvent e) {
+        playerTank.keyReleased(e);
+    }
+
+    @Override
+    public void update(Graphics g) {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, 800, 600);
 
@@ -165,50 +150,7 @@ public class GameClient extends JComponent {
         for (Explosion explosion : explosions) {
             explosion.update(g);
         }
-    }
 
-    public static void main(String[] args) {
-        com.sun.javafx.application.PlatformImpl.startup(() -> {
-        });
-        JFrame frame = new JFrame();
-        frame.setTitle("來了!第一個坦克大戰!!");
-        frame.setIconImage(new ImageIcon("assets/images/icon.png").getImage());
-        GameClient client = GameClient.getInstance();
-        frame.repaint();
-        frame.add(client);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                //client.playerTank.keyPressed(e);
-
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-                //client.playerTank.keyReleased(e);
-
-            }
-        });
-        frame.setVisible(true);
-
-        while (true) {
-            //主遊戲循環
-            try {
-                client.update();
-                client.repaint();
-
-
-                Thread.sleep(50);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    void update() {
 
         if (playerTank.isLive()) {
             for (Tank tank : getEnemyTanks()) {
@@ -217,10 +159,64 @@ public class GameClient extends JComponent {
         }
     }
 
+    public static void main(String[] args) {
+        GameClient client = GameClient.getInstance();
+        JFrame frame=client.getFrame();
+
+        frame.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                client.keyPressed(e);
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                client.keyReleased(e);
+
+            }
+        });
+
+        client.loop(50);
+    }
+
+
     void restart() {
         if (!playerTank.isLive()) {
             playerTank = new Tank(400, 100, Direction.DOWN);
             this.initEnemyTank();
         }
+    }
+
+    public static GameClient getInstance() {
+        return INSTANCE;
+    }
+
+    public List<Wall> getWalls() {
+        return walls;
+    }
+
+    public List<Tank> getEnemyTanks() {
+        return enemyTanks;
+    }
+
+    public Tank getPlayerTank() {
+        return playerTank;
+    }
+
+    public List<Missile> getMissiles() {
+        return missiles;
+    }
+
+    public Blood getBlood() {
+        return blood;
+    }
+
+    void addMissile(Missile missile) {
+        missiles.add(missile);
+    }
+
+    void addExplosion(Explosion explosion) {
+        explosions.add(explosion);
     }
 }
