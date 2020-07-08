@@ -23,7 +23,8 @@ public class Missile extends GameObject {
     }
 
     public void addExplosion() {
-        GameClient.getInstance().addExplosion(new Explosion(x, y, GameClient.getInstance().explosionImg));
+        GameClient.getInstance().addExplosion(new Explosion(x, y,
+                GameClient.getInstance().explosionImg));
         Tools.playAudio("explode.wav");
     }
 
@@ -44,8 +45,8 @@ public class Missile extends GameObject {
             }
         }
 
+        PlayerTank playTank = client.getPlayerTank();
         if (enemy) {
-            Tank playTank = client.getPlayerTank();
             if (live && getRectangle().intersects(playTank.getRectangleForHitDetection())) {
                 addExplosion();
                 playTank.setHp(playTank.getHp() - 20);
@@ -56,7 +57,7 @@ public class Missile extends GameObject {
             }
         } else {
             for (Tank tank : client.getEnemyTanks()) {
-                if (live && getRectangle().intersects(tank.getRectangleForHitDetection())) {
+                if (live && getRectangle().intersects(tank.getRectangle())) {
                     addExplosion();
                     tank.setLive(false);
                     live = false;

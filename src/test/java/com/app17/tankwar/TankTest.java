@@ -13,13 +13,13 @@ class TankTest {
     void getImage() {
 
         for (Direction direction : Direction.values()) {
-            Tank tank = new Tank(0, 0, direction, false);
+            Tank tank = new PlayerTank(0, 0, "tank",direction, false);
 
             assertTrue(tank.getImage().getWidth(null) > 0,
                     direction + " error!");
 
 
-            Tank enemyTank = new Tank(0, 0, direction, true);
+            Tank enemyTank = new Tank(0, 0,"etank", direction, true);
             assertTrue(enemyTank.getImage().getWidth(null) > 0,
                     enemyTank.getClass().getName()+direction + " error!");
         }

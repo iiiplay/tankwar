@@ -51,7 +51,7 @@ public class GameClient extends Client {
 
         wallImg = Tools.getImage("brick.png");
         setPreferredSize(new Dimension(800, 600));
-        playerTank = new Tank(400, 100, Direction.DOWN);
+        playerTank = new PlayerTank(400, 50,"tank", Direction.DOWN,false);
         missiles = new CopyOnWriteArrayList<>();
         explosions = new CopyOnWriteArrayList<>();
         blood = new Blood(400, 250, bloodImg);
@@ -74,19 +74,20 @@ public class GameClient extends Client {
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 4; j++) {
-                enemyTanks.add(new Tank(200 + j * 120, 400 + 40 * i, Direction.UP, true));
+                enemyTanks.add(new Tank(200 + j * 120, 400 + 40 * i,
+                        "eTank",Direction.UP, true));
             }
         }
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        playerTank.keyPressed(e);
+        ((PlayerTank)playerTank).keyPressed(e);
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        playerTank.keyReleased(e);
+        ((PlayerTank)playerTank).keyReleased(e);
     }
 
     @Override
@@ -152,11 +153,11 @@ public class GameClient extends Client {
         }
 
 
-        if (playerTank.isLive()) {
-            for (Tank tank : getEnemyTanks()) {
-                tank.actRandomly();
-            }
-        }
+//        if (playerTank.isLive()) {
+//            for (Tank tank : getEnemyTanks()) {
+//                tank.actRandomly();
+//            }
+//        }
     }
 
     public static void main(String[] args) {
@@ -183,7 +184,7 @@ public class GameClient extends Client {
 
     void restart() {
         if (!playerTank.isLive()) {
-            playerTank = new Tank(400, 100, Direction.DOWN);
+            playerTank = new PlayerTank(400, 100,"tank", Direction.DOWN,false);
             this.initEnemyTank();
         }
     }
@@ -200,8 +201,8 @@ public class GameClient extends Client {
         return enemyTanks;
     }
 
-    public Tank getPlayerTank() {
-        return playerTank;
+    public PlayerTank getPlayerTank() {
+        return (PlayerTank)playerTank;
     }
 
     public List<Missile> getMissiles() {
