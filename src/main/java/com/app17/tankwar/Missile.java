@@ -10,8 +10,8 @@ public class Missile extends GameObject {
     private Direction direction;
 
 
-    Missile(int x, int y, boolean enemy, Direction direction) {
-        super(x, y, (Image) null);
+    Missile(int x, int y,Image[] images, boolean enemy, Direction direction) {
+        super(x, y, images);
         this.direction = direction;
         this.enemy = enemy;
         live = true;
@@ -28,43 +28,49 @@ public class Missile extends GameObject {
         Tools.playAudio("explode.wav");
     }
 
-
-    @Override
-    public void update(Graphics g) {
+    //偵測碰撞
+    public static void detectCollision(GameObject object) {
         GameClient client = GameClient.getInstance();
-        move();
-        if (x < 0 || x > 800 || y < 0 || y > 600) {
-            live = false;
+        Missile missile=(Missile)object;
+        if (missile.x < 0 || missile.x > 800 || missile.y < 0 || missile.y > 600) {
+            missile.live = false;
             return;
         }
 
         for (Wall wall : client.getWalls()) {
-            if (live && getRectangle().intersects(wall.getRectangle())) {
-                live = false;
+            if (missile.live && missile.getRectangle().intersects(wall.getRectangle())) {
+                missile.live = false;
                 break;
             }
         }
 
         PlayerTank playTank = client.getPlayerTank();
-        if (enemy) {
-            if (live && getRectangle().intersects(playTank.getRectangleForHitDetection())) {
-                addExplosion();
+        if (missile.enemy) {
+            if (missile.live && missile.getRectangle().intersects(playTank.getRectangleForHitDetection())) {
+                missile.addExplosion();
                 playTank.setHp(playTank.getHp() - 20);
                 if (playTank.getHp() <= 0) {
                     playTank.setLive(false);
                 }
-                live = false;
+                missile.live = false;
             }
         } else {
             for (Tank tank : client.getEnemyTanks()) {
-                if (live && getRectangle().intersects(tank.getRectangle())) {
-                    addExplosion();
+                if (missile.live && missile.getRectangle().intersects(tank.getRectangle())) {
+                    missile.addExplosion();
                     tank.setLive(false);
-                    live = false;
+                    missile.live = false;
                     break;
                 }
             }
         }
+    }
+
+    @Override
+    public void update(Graphics g) {
+
+        move();
+        detectCollision(this);
 
         if (live) {
             draw(g);
@@ -73,7 +79,7 @@ public class Missile extends GameObject {
     }
 
     private Image getImage() {
-        return direction.getImage("missile");
+        return images[direction.index];
     }
 
     @Override

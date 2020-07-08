@@ -1,42 +1,19 @@
 package com.app17.tankwar;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.util.Random;
 
-public class PlayerTank extends Tank{
-    public PlayerTank(int x, int y, String imageName, Direction direction, boolean enemy) {
-        super(x, y, imageName, direction, enemy);
+public class PlayerTank extends Tank implements CamelPet {
+
+    public PlayerTank(int x, int y, Image[] images, Direction direction, boolean enemy) {
+        super(x, y, images, direction, enemy);
+        step = 0;
     }
 
-    public void keyPressed(KeyEvent e) {
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_UP:
-                up = true;
-                break;
-            case KeyEvent.VK_DOWN:
-                down = true;
-                break;
-            case KeyEvent.VK_LEFT:
-                left = true;
-                break;
-            case KeyEvent.VK_RIGHT:
-                right = true;
-                break;
-            case KeyEvent.VK_CONTROL:
-                fire();
-                break;
-            case KeyEvent.VK_A:
-                superFire();
-                break;
-
-        }
-    }
-
-    private void superFire() {
+    public void superFire() {
         for (Direction direction : Direction.values()) {
             Missile missile = new Missile(x + getImage().getWidth(null) / 2 - 6,
-                    y + getImage().getHeight(null) / 2 - 6, enemy, direction);
+                    y + getImage().getHeight(null) / 2 - 6, GameClient.getInstance().missileImg, enemy, direction);
 
             GameClient.getInstance().addMissile(missile);
         }
@@ -46,26 +23,6 @@ public class PlayerTank extends Tank{
         Tools.playAudio(audioFile);
     }
 
-    public void keyReleased(KeyEvent e) {
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_UP:
-                up = false;
-                break;
-            case KeyEvent.VK_DOWN:
-                down = false;
-                break;
-            case KeyEvent.VK_LEFT:
-                left = false;
-                break;
-            case KeyEvent.VK_RIGHT:
-                right = false;
-                break;
-            case KeyEvent.VK_F2:
-                GameClient.getInstance().restart();
-
-        }
-    }
-
     @Override
     public void draw(Graphics g) {
         g.setColor(Color.WHITE);
@@ -73,8 +30,9 @@ public class PlayerTank extends Tank{
         g.setColor(Color.RED);
         int width = hp * this.getImage().getWidth(null) / 100;
         g.fillRect(x, y - 10, width, 10);
-        Image petImage = Tools.getImage("pet-camel.gif");
-        g.drawImage(petImage, this.x - petImage.getWidth(null) - 4, this.y, null);
+
+        g.drawImage(CamelPet.PET_IMAGE, this.x - CamelPet.PET_IMAGE.getWidth(null) - CamelPet.DISTANCE
+                , this.y, null);
 
         super.draw(g);
     }
@@ -83,11 +41,10 @@ public class PlayerTank extends Tank{
     public void update(Graphics g) {
         determineDirection();
         super.update(g);
-
     }
 
+    //偵測行走方向
     private void determineDirection() {
-
         //預設為暫停狀態
         this.stopped = false;
 
@@ -106,9 +63,19 @@ public class PlayerTank extends Tank{
         else if (!up && !left && !down && right) this.direction = Direction.RIGHT;
     }
 
+    //取得坦克區間
+    public Rectangle getRectangle() {
+        int delta = PET_IMAGE.getWidth(null) + CamelPet.DISTANCE;
+        return new Rectangle(x - delta, y,
+                this.getImage().getWidth(null) + delta,
+                this.getImage().getHeight(null));
+    }
+
     //取得坦克主體區間
     public Rectangle getRectangleForHitDetection() {
-        return new Rectangle(x, y, this.getImage().getWidth(null),
+        int delta = PET_IMAGE.getWidth(null) + CamelPet.DISTANCE;
+        return new Rectangle(x - CamelPet.PET_IMAGE.getWidth(null) - CamelPet.DISTANCE, y,
+                this.getImage().getWidth(null),
                 this.getImage().getHeight(null));
     }
 }
