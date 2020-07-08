@@ -6,17 +6,42 @@ import java.awt.event.KeyEvent;
 
 
 public abstract class Client extends JComponent implements Runnable {
-
     private Thread thread;
     private int FPS;
     protected boolean gameStop;
 
+    private int screenWidth;
+    private int screenHeight;
+
+    public int getScreenWidth() {
+        return screenWidth;
+    }
+
+    public void setScreenWidth(int screenWidth) {
+        this.screenWidth = screenWidth;
+    }
+
+    public int getScreenHeight() {
+        return screenHeight;
+    }
+
+    public void setScreenHeight(int screenHeight) {
+        this.screenHeight = screenHeight;
+    }
+
     public Client() {
         com.sun.javafx.application.PlatformImpl.startup(() -> {
         });
+
+        setScreen(800, 600);
         setFPS(25);
         thread = new Thread(this);
         thread.start();
+    }
+
+    public void setScreen(int screenWidth, int screenHeight) {
+        this.screenWidth = screenWidth;
+        this.screenHeight = screenHeight;
     }
 
     public int getFPS() {

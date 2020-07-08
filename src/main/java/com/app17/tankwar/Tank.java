@@ -119,14 +119,14 @@ public class Tank extends GameObject {
 
         if (tank.x < 0) {
             tank.x = 0;
-        } else if (tank.x > 800 - tank.getImage().getWidth(null)) {
-            tank.x = 800 - tank.getImage().getWidth(null);
+        } else if (tank.x > client.getScreenWidth() - tank.getImage().getWidth(null)) {
+            tank.x = client.getScreenWidth() - tank.getImage().getWidth(null);
         }
 
         if (tank.y < 0) {
             tank.y = 0;
-        } else if (tank.y > 600 - tank.getImage().getHeight(null)) {
-            tank.y = 600 - tank.getImage().getHeight(null);
+        } else if (tank.y > client.getScreenHeight() - tank.getImage().getHeight(null)) {
+            tank.y = client.getScreenHeight() - tank.getImage().getHeight(null);
         }
 
         for (Wall wall : client.getWalls()) {

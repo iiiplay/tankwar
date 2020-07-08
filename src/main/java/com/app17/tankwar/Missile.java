@@ -32,7 +32,7 @@ public class Missile extends GameObject {
     public static void detectCollision(GameObject object) {
         GameClient client = GameClient.getInstance();
         Missile missile=(Missile)object;
-        if (missile.x < 0 || missile.x > 800 || missile.y < 0 || missile.y > 600) {
+        if (missile.x < 0 || missile.x > client.getScreenWidth() || missile.y < 0 || missile.y > client.getScreenHeight()) {
             missile.live = false;
             return;
         }

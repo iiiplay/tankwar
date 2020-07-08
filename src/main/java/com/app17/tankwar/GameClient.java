@@ -1,6 +1,7 @@
 package com.app17.tankwar;
 
 import com.app17.tankwar.gameobject.Client;
+import com.app17.tankwar.gameobject.GameObject;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,8 +25,8 @@ public class GameClient extends Client {
     private List<Explosion> explosions;
     private Blood blood;
 
-    private final AtomicInteger enemyKilled = new AtomicInteger(0);
-    private final static Random random = new Random();
+    private List<GameObject> gameObjects=new CopyOnWriteArrayList<>();
+
     public Image bloodImg;
     public Image[] explosionImg = new Image[11];
     public Image[] tankImg = new Image[8];
@@ -33,12 +34,16 @@ public class GameClient extends Client {
     public Image[] missileImg = new Image[8];
     public Image wallImg;
 
+    private final AtomicInteger enemyKilled = new AtomicInteger(0);
+    private final static Random random = new Random();
+
     public GameClient() {
+        initImage();
         init();
+        
     }
 
-    @Override
-    public void init() {
+    public void initImage(){
         bloodImg = Tools.getImage("blood.png");
         for (int i = 0; i < explosionImg.length; i++) {
             explosionImg[i] = Tools.getImage(i + ".gif");
@@ -52,14 +57,16 @@ public class GameClient extends Client {
             missileImg[i] = direction[i].getImage("missile");
         }
 
-
         wallImg = Tools.getImage("brick.png");
-        setPreferredSize(new Dimension(800, 600));
+    }
+
+    @Override
+    public void init() {
+        setPreferredSize(new Dimension(getScreenWidth(), getScreenHeight()));
         playerTank = new PlayerTank(400, 50, tankImg, Direction.DOWN, false);
         missiles = new CopyOnWriteArrayList<>();
         explosions = new CopyOnWriteArrayList<>();
         blood = new Blood(400, 250, bloodImg);
-
 
         //將陣列轉換成集合
         walls = Arrays.asList(
@@ -129,7 +136,7 @@ public class GameClient extends Client {
     @Override
     public void update(Graphics g) {
         g.setColor(Color.BLACK);
-        g.fillRect(0, 0, 800, 600);
+        g.fillRect(0, 0, getScreenWidth(), getScreenHeight());
 
         //GameOver
         if (!playerTank.isLive()) {
