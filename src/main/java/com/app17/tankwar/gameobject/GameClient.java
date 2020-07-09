@@ -16,8 +16,6 @@ public abstract class GameClient extends JComponent implements Runnable {
     protected static GameClient instance;
     protected List<GameObject> gameObjects = new CopyOnWriteArrayList<>();
 
-
-
     public int getScreenWidth() {
         return screenWidth;
     }
@@ -26,7 +24,7 @@ public abstract class GameClient extends JComponent implements Runnable {
         gameObjects.add(object);
     }
 
-    public void addGameObjects(List objects){
+    public void addGameObject(List objects){
         gameObjects.addAll(objects);
     }
 

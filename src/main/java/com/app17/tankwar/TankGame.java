@@ -1,7 +1,6 @@
 package com.app17.tankwar;
 
 import com.app17.tankwar.gameobject.GameClient;
-import com.app17.tankwar.gameobject.GameObject;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,17 +22,32 @@ public class TankGame extends GameClient {
     private Blood blood;
 
 
-
     public Image bloodImg;
     public Image[] explosionImg = new Image[11];
     public Image[] tankImg = new Image[8];
-    public Image[] etankImg = new Image[8];
+    public Image[] enemyTankImg = new Image[8];
     public Image[] missileImg = new Image[8];
     public Image wallImg;
 
     private final AtomicInteger enemyKilled = new AtomicInteger(0);
     private final static Random random = new Random();
 
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        playerTank.keyPressed(e);
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        playerTank.keyReleased(e);
+        switch (e.getKeyCode()) {
+
+            case KeyEvent.VK_F2:
+                restart();
+                break;
+        }
+    }
 
     @Override
     public void init() {
@@ -47,15 +61,12 @@ public class TankGame extends GameClient {
 
         for (int i = 0; i < direction.length; i++) {
             tankImg[i] = direction[i].getImage("tank");
-            etankImg[i] = direction[i].getImage("etank");
+            enemyTankImg[i] = direction[i].getImage("etank");
             missileImg[i] = direction[i].getImage("missile");
         }
 
         wallImg = Tools.getImage("brick.png");
-
-
         playerTank = new Player(400, 50, tankImg, Direction.DOWN, false);
-
         missiles = new CopyOnWriteArrayList<>();
         explosions = new CopyOnWriteArrayList<>();
         blood = new Blood(400, 250, bloodImg);
@@ -67,16 +78,15 @@ public class TankGame extends GameClient {
                 new Wall(100, 180, wallImg, 12, false),
                 new Wall(700, 180, wallImg, 12, false));
 
-
         initEnemyTank();
     }
 
     private void initEnemyTank() {
-        this.enemyTanks = new CopyOnWriteArrayList<>();
+        enemyTanks = new CopyOnWriteArrayList<>();
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 4; j++) {
                 enemyTanks.add(new Tank(200 + j * 120, 400 + 40 * i,
-                        etankImg, Direction.UP, true));
+                        enemyTankImg, Direction.UP, true));
             }
         }
     }
@@ -84,55 +94,12 @@ public class TankGame extends GameClient {
 
     //取得同一個實體
     public static TankGame getInstance() {
-        if(instance==null){
-            instance=new TankGame();
+        if (instance == null) {
+            instance = new TankGame();
         }
-        return (TankGame)instance;
+        return (TankGame) instance;
     }
 
-    @Override
-    public void keyPressed(KeyEvent e) {
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_UP:
-                playerTank.up = true;
-                break;
-            case KeyEvent.VK_DOWN:
-                playerTank.down = true;
-                break;
-            case KeyEvent.VK_LEFT:
-                playerTank.left = true;
-                break;
-            case KeyEvent.VK_RIGHT:
-                playerTank.right = true;
-                break;
-            case KeyEvent.VK_CONTROL:
-                playerTank.fire();
-                break;
-            case KeyEvent.VK_A:
-                playerTank.superFire();
-                break;
-        }
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_UP:
-                playerTank.up = false;
-                break;
-            case KeyEvent.VK_DOWN:
-                playerTank.down = false;
-                break;
-            case KeyEvent.VK_LEFT:
-                playerTank.left = false;
-                break;
-            case KeyEvent.VK_RIGHT:
-                playerTank.right = false;
-                break;
-            case KeyEvent.VK_F2:
-                restart();
-        }
-    }
 
     @Override
     public void update(Graphics g) {
@@ -197,6 +164,17 @@ public class TankGame extends GameClient {
         }
     }
 
+
+    void restart() {
+        if (!playerTank.isLive()) {
+            playerTank = new Player(400, 100, tankImg, Direction.DOWN, false);
+            initEnemyTank();
+            missiles.clear();
+            explosions.clear();
+            enemyTanks.clear();
+        }
+    }
+
     public static void main(String[] args) {
 
         TankGame client = TankGame.getInstance();
@@ -212,17 +190,11 @@ public class TankGame extends GameClient {
             @Override
             public void keyReleased(KeyEvent e) {
                 client.keyReleased(e);
-
             }
         });
     }
 
-    void restart() {
-        if (!playerTank.isLive()) {
-            playerTank = new Player(400, 100, tankImg, Direction.DOWN, false);
-            this.initEnemyTank();
-        }
-    }
+
 
     public List<Wall> getWalls() {
         return walls;
@@ -235,7 +207,6 @@ public class TankGame extends GameClient {
     public Player getPlayerTank() {
         return playerTank;
     }
-
 
     public Blood getBlood() {
         return blood;

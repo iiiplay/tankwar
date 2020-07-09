@@ -1,6 +1,7 @@
 package com.app17.tankwar;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.Random;
 
 public class Player extends Tank implements CamelPet {
@@ -61,6 +62,48 @@ public class Player extends Tank implements CamelPet {
         else if (!up && !left && down && right) this.direction = Direction.RIGHT_DOWN;
         else if (!up && left && !down && !right) this.direction = Direction.LEFT;
         else if (!up && !left && !down && right) this.direction = Direction.RIGHT;
+    }
+
+
+    public void keyPressed(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_UP:
+                up = true;
+                break;
+            case KeyEvent.VK_DOWN:
+                down = true;
+                break;
+            case KeyEvent.VK_LEFT:
+                left = true;
+                break;
+            case KeyEvent.VK_RIGHT:
+                right = true;
+                break;
+            case KeyEvent.VK_CONTROL:
+                fire();
+                break;
+            case KeyEvent.VK_A:
+                superFire();
+                break;
+        }
+    }
+
+
+    public void keyReleased(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_UP:
+                up = false;
+                break;
+            case KeyEvent.VK_DOWN:
+                down = false;
+                break;
+            case KeyEvent.VK_LEFT:
+                left = false;
+                break;
+            case KeyEvent.VK_RIGHT:
+                right = false;
+                break;
+        }
     }
 
     //取得坦克區間
