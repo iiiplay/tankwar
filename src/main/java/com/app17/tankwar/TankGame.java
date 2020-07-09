@@ -1,6 +1,6 @@
 package com.app17.tankwar;
 
-import com.app17.tankwar.gameobject.Client;
+import com.app17.tankwar.gameobject.GameClient;
 import com.app17.tankwar.gameobject.GameObject;
 
 import javax.swing.*;
@@ -13,19 +13,16 @@ import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class GameClient extends Client {
+public class TankGame extends GameClient {
 
-
-    private static final GameClient INSTANCE = new GameClient();
-
-    private PlayerTank playerTank;
+    private Player playerTank;
     private List<Tank> enemyTanks;
     private List<Wall> walls;
     private List<Missile> missiles;
     private List<Explosion> explosions;
     private Blood blood;
 
-    private List<GameObject> gameObjects=new CopyOnWriteArrayList<>();
+
 
     public Image bloodImg;
     public Image[] explosionImg = new Image[11];
@@ -37,13 +34,10 @@ public class GameClient extends Client {
     private final AtomicInteger enemyKilled = new AtomicInteger(0);
     private final static Random random = new Random();
 
-    public GameClient() {
-        initImage();
-        init();
-        
-    }
 
-    public void initImage(){
+    @Override
+    public void init() {
+        setPreferredSize(new Dimension(getScreenWidth(), getScreenHeight()));
         bloodImg = Tools.getImage("blood.png");
         for (int i = 0; i < explosionImg.length; i++) {
             explosionImg[i] = Tools.getImage(i + ".gif");
@@ -58,12 +52,10 @@ public class GameClient extends Client {
         }
 
         wallImg = Tools.getImage("brick.png");
-    }
 
-    @Override
-    public void init() {
-        setPreferredSize(new Dimension(getScreenWidth(), getScreenHeight()));
-        playerTank = new PlayerTank(400, 50, tankImg, Direction.DOWN, false);
+
+        playerTank = new Player(400, 50, tankImg, Direction.DOWN, false);
+
         missiles = new CopyOnWriteArrayList<>();
         explosions = new CopyOnWriteArrayList<>();
         blood = new Blood(400, 250, bloodImg);
@@ -87,6 +79,15 @@ public class GameClient extends Client {
                         etankImg, Direction.UP, true));
             }
         }
+    }
+
+
+    //取得同一個實體
+    public static TankGame getInstance() {
+        if(instance==null){
+            instance=new TankGame();
+        }
+        return (TankGame)instance;
     }
 
     @Override
@@ -171,7 +172,6 @@ public class GameClient extends Client {
             blood.update(g);
         }
 
-
         int count = enemyTanks.size();
         enemyTanks.removeIf(t -> !t.isLive());
         enemyKilled.addAndGet(count - enemyTanks.size());
@@ -195,12 +195,11 @@ public class GameClient extends Client {
         for (Explosion explosion : explosions) {
             explosion.update(g);
         }
-
-
     }
 
     public static void main(String[] args) {
-        GameClient client = GameClient.getInstance();
+
+        TankGame client = TankGame.getInstance();
         JFrame frame = client.getFrame("來了!第一個坦克大戰!!",
                 new ImageIcon("assets/images/icon.png").getImage());
 
@@ -216,20 +215,13 @@ public class GameClient extends Client {
 
             }
         });
-
-
     }
-
 
     void restart() {
         if (!playerTank.isLive()) {
-            playerTank = new PlayerTank(400, 100, tankImg, Direction.DOWN, false);
+            playerTank = new Player(400, 100, tankImg, Direction.DOWN, false);
             this.initEnemyTank();
         }
-    }
-
-    public static GameClient getInstance() {
-        return INSTANCE;
     }
 
     public List<Wall> getWalls() {
@@ -240,13 +232,10 @@ public class GameClient extends Client {
         return enemyTanks;
     }
 
-    public PlayerTank getPlayerTank() {
-        return (PlayerTank) playerTank;
+    public Player getPlayerTank() {
+        return playerTank;
     }
 
-    public List<Missile> getMissiles() {
-        return missiles;
-    }
 
     public Blood getBlood() {
         return blood;

@@ -1,7 +1,5 @@
 package com.app17.tankwar.gameobject;
 
-import com.app17.tankwar.GameClient;
-
 import java.awt.*;
 
 public abstract class GameObject {

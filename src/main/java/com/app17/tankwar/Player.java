@@ -3,9 +3,9 @@ package com.app17.tankwar;
 import java.awt.*;
 import java.util.Random;
 
-public class PlayerTank extends Tank implements CamelPet {
+public class Player extends Tank implements CamelPet {
 
-    public PlayerTank(int x, int y, Image[] images, Direction direction, boolean enemy) {
+    public Player(int x, int y, Image[] images, Direction direction, boolean enemy) {
         super(x, y, images, direction, enemy);
         step = 0;
     }
@@ -13,9 +13,9 @@ public class PlayerTank extends Tank implements CamelPet {
     public void superFire() {
         for (Direction direction : Direction.values()) {
             Missile missile = new Missile(x + getImage().getWidth(null) / 2 - 6,
-                    y + getImage().getHeight(null) / 2 - 6, GameClient.getInstance().missileImg, enemy, direction);
+                    y + getImage().getHeight(null) / 2 - 6, TankGame.getInstance().missileImg, enemy, direction);
 
-            GameClient.getInstance().addMissile(missile);
+            TankGame.getInstance().addMissile(missile);
         }
 
         String audioFile = new Random().nextBoolean() ? "supershoot.aiff" : "supershoot.wav";

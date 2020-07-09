@@ -70,10 +70,10 @@ public class Tank extends GameObject {
 
     protected void fire() {
         Missile missile = new Missile(x + getImage().getWidth(null) / 2 - 6,
-                y + getImage().getHeight(null) / 2 - 6, GameClient.getInstance().missileImg,
+                y + getImage().getHeight(null) / 2 - 6, TankGame.getInstance().missileImg,
                 enemy, direction);
 
-        GameClient.getInstance().addMissile(missile);
+        TankGame.getInstance().addMissile(missile);
         Tools.playAudio("shoot.wav");
     }
 
@@ -113,7 +113,7 @@ public class Tank extends GameObject {
 
     //偵測碰撞
     public static void detectCollision(GameObject object) {
-        GameClient client = GameClient.getInstance();
+        TankGame client = TankGame.getInstance();
         Tank tank = (Tank) object;
         Rectangle rectangle = tank.getRectangle();
 

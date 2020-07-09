@@ -20,7 +20,7 @@ class TankTest {
             tankImg[i]=directions[i].getImage("tank");
         }
         for (Direction direction : Direction.values()) {
-            Tank tank = new PlayerTank(0, 0, tankImg,direction, false);
+            Tank tank = new Player(0, 0, tankImg,direction, false);
 
             assertTrue(tank.getImage().getWidth(null) > 0,
                     direction + " error!");

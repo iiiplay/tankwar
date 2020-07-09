@@ -3,18 +3,31 @@ package com.app17.tankwar.gameobject;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
-public abstract class Client extends JComponent implements Runnable {
+public abstract class GameClient extends JComponent implements Runnable {
     private Thread thread;
     private int FPS;
     protected boolean gameStop;
-
     private int screenWidth;
     private int screenHeight;
+    protected static GameClient instance;
+    protected List<GameObject> gameObjects = new CopyOnWriteArrayList<>();
+
+
 
     public int getScreenWidth() {
         return screenWidth;
+    }
+
+    public void addGameObject(GameObject object){
+        gameObjects.add(object);
+    }
+
+    public void addGameObjects(List objects){
+        gameObjects.addAll(objects);
     }
 
     public void setScreenWidth(int screenWidth) {
@@ -29,15 +42,15 @@ public abstract class Client extends JComponent implements Runnable {
         this.screenHeight = screenHeight;
     }
 
-    public Client() {
+    public GameClient() {
         com.sun.javafx.application.PlatformImpl.startup(() -> {
         });
-
         setScreen(800, 600);
         setFPS(25);
         thread = new Thread(this);
         thread.start();
     }
+
 
     public void setScreen(int screenWidth, int screenHeight) {
         this.screenWidth = screenWidth;
@@ -62,13 +75,14 @@ public abstract class Client extends JComponent implements Runnable {
 
     @Override
     public void run() {
+        init();
+
         long startTime;
         long URDTimeMillis;
         long waitTime;
         long targetTime = 1000 / FPS;
 
         while (!gameStop) {
-
             //主遊戲循環
             startTime = System.nanoTime();
             repaint();
