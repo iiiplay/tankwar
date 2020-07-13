@@ -1,33 +1,24 @@
 package com.app17.tankwar;
 
+import com.app17.tankwar.gameobject.GameObject;
+
 import java.awt.*;
 
-public class Blood {
-    private int x,y;
-    private boolean live;
-    private final Image image;
+public class Blood extends GameObject {
 
-    public Blood(int x, int y) {
-        this.x = x;
-        this.y = y;
+    public Blood(int x, int y,Image image) {
+        super(x,y,image);
         live=true;
-        image=Tools.getImage("blood.png");
     }
 
-    public boolean isLive() {
-        return live;
-    }
 
-    public void setLive(boolean live) {
-        this.live = live;
-    }
+    @Override
+    public void draw(Graphics g)
+    {
+        if(!live)
+            return;
 
-    void draw(Graphics g){
         g.drawImage(image,x,y,null);
     }
 
-    public Rectangle getRectangle() {
-        return new Rectangle(x, y, image.getWidth(null),
-                image.getHeight(null));
-    }
 }

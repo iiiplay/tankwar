@@ -1,262 +1,85 @@
 package com.app17.tankwar;
 
+import com.app17.tankwar.gameobject.GameObject;
+
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.util.Random;
 
-public class Tank {
+public class Tank extends GameObject {
+    public static final int MOVE_SPEED = 5;
+    public static final int MAX_HP = 100;
 
-    private static final int MOVE_SPEED = 5;
+    protected Direction direction;
+    protected int hp;
+    protected boolean up, down, left, right;
 
-    private int x;
-    private int y;
-    private Direction direction;
-    private boolean stopped;
-    boolean enemy;
-
-    private boolean live = true;
-    private static final int MAX_HP = 100;
-    private int hp = MAX_HP;
-
-
-    int getHp() {
+    public int getHp() {
         return hp;
     }
 
-    void setHp(int hp) {
+    public void setHp(int hp) {
         this.hp = hp;
     }
 
-    boolean isLive() {
-        return live;
+    boolean isDying() {
+        return hp <= MAX_HP * 0.2;
     }
 
-    void setLive(boolean live) {
-        this.live = live;
+
+    private final Random random = new Random();
+
+    public Tank(int x, int y, Image[] images, Direction direction) {
+        this(x, y, images, direction, false);
     }
 
-    public Tank(int x, int y, Direction direction) {
-        this(x, y, direction, false);
-    }
-
-    public Tank(int x, int y, Direction direction, boolean enemy) {
-        this.x = x;
-        this.y = y;
+    public Tank(int x, int y, Image[] images, Direction direction, boolean enemy) {
+        super(x, y, images);
+        //目前方向
         this.direction = direction;
         this.enemy = enemy;
+        hp = MAX_HP;
+        live = true;
+        step = random.nextInt(12) + 3;
     }
 
-    public boolean isEnemy() {
-        return enemy;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-
-    void move() {
+    public void move() {
         if (stopped)
             return;
 
+        oldX = x;
+        oldY = y;
         x += direction.xFactor * MOVE_SPEED;
         y += direction.yFactor * MOVE_SPEED;
-
     }
 
-    Image getImage() {
-        String prefix = enemy ? "e" : "";
-        return direction.getImage(prefix + "tank");
+    protected Image getImage() {
+        return images[direction.index];
     }
 
-    boolean isDying(){
-        return hp<=MAX_HP*0.2;
-    }
-
-    private boolean up, down, left, right;
-
-    public void keyPressed(KeyEvent e) {
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_UP:
-                up = true;
-                break;
-            case KeyEvent.VK_DOWN:
-                down = true;
-                break;
-            case KeyEvent.VK_LEFT:
-                left = true;
-                break;
-            case KeyEvent.VK_RIGHT:
-                right = true;
-                break;
-            case KeyEvent.VK_CONTROL:
-                fire();
-                break;
-            case KeyEvent.VK_A:
-                superFire();
-                break;
-
-        }
-    }
-
-    private void superFire() {
-        for (Direction direction : Direction.values()) {
-            Missile missile = new Missile(x + getImage().getWidth(null) / 2 - 6,
-                    y + getImage().getHeight(null) / 2 - 6, enemy, direction);
-
-            GameClient.getInstance().addMissile(missile);
-        }
-
-        String audioFile = new Random().nextBoolean() ? "supershoot.aiff" : "supershoot.wav";
-
-        Tools.playAudio(audioFile);
-    }
-
-    private void fire() {
-        Missile missile = new Missile(x + getImage().getWidth(null) / 2 - 6,
-                y + getImage().getHeight(null) / 2 - 6, enemy, direction);
-
-        GameClient.getInstance().addMissile(missile);
-        Tools.playAudio("shoot.wav");
-    }
-
-
-    private void determineDirection() {
-
-        //預設為暫停狀態
-        this.stopped = false;
-
-        if (!up && !left && !down && !right) {
-            this.stopped = true;
-            return;
-        }
-
-        if (up && left && !down && !right) this.direction = Direction.LEFT_UP;
-        else if (up && !left && !down && right) this.direction = Direction.RIGHT_UP;
-        else if (up && !left && !down && !right) this.direction = Direction.UP;
-        else if (!up && !left && down && !right) this.direction = Direction.DOWN;
-        else if (!up && left && down && !right) this.direction = Direction.LEFT_DOWN;
-        else if (!up && !left && down && right) this.direction = Direction.RIGHT_DOWN;
-        else if (!up && left && !down && !right) this.direction = Direction.LEFT;
-        else if (!up && !left && !down && right) this.direction = Direction.RIGHT;
-
-
-    }
-
-    void draw(Graphics g) {
-
-        int oldX = x, oldY = y;
-        if (!this.enemy) {
-            this.determineDirection();
-        }
-
-        move();
-        if (x < 0) {
-            x = 0;
-        } else if (x > 800 - this.getImage().getWidth(null)) {
-            x = 800 - this.getImage().getWidth(null);
-        }
-
-        if (y < 0) {
-            y = 0;
-        } else if (y > 600 - this.getImage().getHeight(null)) {
-            y = 600 - this.getImage().getHeight(null);
-        }
-
-        Rectangle rec = getRectangle();
-        for (Wall wall : GameClient.getInstance().getWalls()) {
-            if (rec.intersects((wall.getRectangle()))) {
-                x = oldX;
-                y = oldY;
-                break;
-            }
-        }
-
-
-        for (Tank tank : GameClient.getInstance().getEnemyTanks()) {
-            if (tank != this && rec.intersects((tank.getRectangle()))) {
-                x = oldX;
-                y = oldY;
-                break;
-            }
-        }
-
-        if (enemy && rec.intersects(GameClient.getInstance().getPlayerTank().getRectangle())) {
-            x = oldX;
-            y = oldY;
-        }
-
-        if (!enemy) {
-            Blood blood=GameClient.getInstance().getBlood();
-            if (blood.isLive() && this.getRectangle().intersects(GameClient.getInstance().getBlood().getRectangle())) {
-                this.hp = MAX_HP;
-                Tools.playAudio("revive.wav");
-                blood.setLive(false);
-            }
-
-
-            g.setColor(Color.WHITE);
-            g.fillRect(x, y - 10, this.getImage().getWidth(null), 10);
-            g.setColor(Color.RED);
-            int width = hp * this.getImage().getWidth(null) / 100;
-            g.fillRect(x, y - 10, width, 10);
-            Image petImage = Tools.getImage("pet-camel.gif");
-            g.drawImage(petImage, this.x - petImage.getWidth(null) - DISTANCE_TO_PET, this.y, null);
-        }
-
-        g.drawImage(this.getImage(), this.getX(), this.getY(), null);
-    }
-
-    private static final int DISTANCE_TO_PET = 4;
-
-    //取得坦克區間
-    Rectangle getRectangle() {
-        if (enemy) {
-            return new Rectangle(x, y, this.getImage().getWidth(null),
-                    this.getImage().getHeight(null));
-        } else {
-            Image petImage = Tools.getImage("pet-camel.gif");
-            int delta = petImage.getWidth(null) + DISTANCE_TO_PET;
-            return new Rectangle(x - delta, y,
-                    this.getImage().getWidth(null) + delta,
-                    this.getImage().getHeight(null));
-        }
-    }
 
     //取得坦克主體區間
-    Rectangle getRectangleForHitDetection() {
+    public Rectangle getRectangle() {
         return new Rectangle(x, y, this.getImage().getWidth(null),
                 this.getImage().getHeight(null));
     }
 
-    public void keyReleased(KeyEvent e) {
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_UP:
-                up = false;
-                break;
-            case KeyEvent.VK_DOWN:
-                down = false;
-                break;
-            case KeyEvent.VK_LEFT:
-                left = false;
-                break;
-            case KeyEvent.VK_RIGHT:
-                right = false;
-                break;
-            case KeyEvent.VK_F2:
-                GameClient.getInstance().restart();
-
-        }
+    @Override
+    public void draw(Graphics g) {
+        g.drawImage(getImage(), getX(), getY(), null);
     }
 
-    private final Random random = new Random();
-    private int step = random.nextInt(12) + 3;
+    protected void fire() {
+        Missile missile = new Missile(x + getImage().getWidth(null) / 2 - 6,
+                y + getImage().getHeight(null) / 2 - 6, TankGame.getInstance().missileImg,
+                enemy, direction);
 
-    void actRandomly() {
+        TankGame.getInstance().addMissile(missile);
+        Tools.playAudio("shoot.wav");
+    }
+
+
+    //亂數移動跟開槍
+    public void actRandomly() {
         Direction[] dirs = Direction.values();
 
         if (step == 0) {
@@ -266,7 +89,74 @@ public class Tank {
                 this.fire();
             }
         }
-        step--;
+        if (random.nextInt(2) == 1) {
+            step--;
+        }
+    }
+
+
+    @Override
+    public void update(Graphics g) {
+
+        move();
+        detectCollision(this);
+
+        if (enemy) {
+            actRandomly();
+        }
+
+        if (live) {
+            draw(g);
+        }
+    }
+
+
+    //偵測碰撞
+    public static void detectCollision(GameObject object) {
+        TankGame client = TankGame.getInstance();
+        Tank tank = (Tank) object;
+        Rectangle rectangle = tank.getRectangle();
+
+        if (tank.x < 0) {
+            tank.x = 0;
+        } else if (tank.x > client.getScreenWidth() - tank.getImage().getWidth(null)) {
+            tank.x = client.getScreenWidth() - tank.getImage().getWidth(null);
+        }
+
+        if (tank.y < 0) {
+            tank.y = 0;
+        } else if (tank.y > client.getScreenHeight() - tank.getImage().getHeight(null)) {
+            tank.y = client.getScreenHeight() - tank.getImage().getHeight(null);
+        }
+
+        for (Wall wall : client.getWalls()) {
+            if (rectangle.intersects((wall.getRectangle()))) {
+                tank.x = tank.oldX;
+                tank.y = tank.oldY;
+                break;
+            }
+        }
+
+        for (Tank enemyTank : client.getEnemyTanks()) {
+            if (enemyTank != tank && rectangle.intersects((enemyTank.getRectangle()))) {
+                tank.x = tank.oldX;
+                tank.y = tank.oldY;
+                break;
+            }
+        }
+
+        if (tank.enemy && rectangle.intersects(client.getPlayerTank().getRectangle())) {
+            tank.x = tank.oldX;
+            tank.y = tank.oldY;
+        }
+
+        if (!tank.enemy) {
+            Blood blood = client.getBlood();
+            if (blood.isLive() && tank.getRectangle().intersects(client.getBlood().getRectangle())) {
+                tank.hp = MAX_HP;
+                Tools.playAudio("revive.wav");
+                blood.setLive(false);
+            }
+        }
     }
 }
-

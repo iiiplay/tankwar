@@ -4,24 +4,26 @@ import java.awt.*;
 
 public enum Direction {
 
-    UP("U", 0, -1),
-    DOWN("D", 0, 1),
-    LEFT("L", -1, 0),
-    RIGHT("R", 1, 0),
-    LEFT_UP("LU", -1, -1),
-    RIGHT_UP("RU", 1, -1),
-    LEFT_DOWN("LD", -1, 1),
-    RIGHT_DOWN("RD", 1, 1);
+    UP(0, "U", 0, -1),
+    DOWN(1, "D", 0, 1),
+    LEFT(2, "L", -1, 0),
+    RIGHT(3, "R", 1, 0),
+    LEFT_UP(4, "LU", -1, -1),
+    RIGHT_UP(5, "RU", 1, -1),
+    LEFT_DOWN(6, "LD", -1, 1),
+    RIGHT_DOWN(7, "RD", 1, 1);
 
     private final String abbrev;
-    final int xFactor, yFactor;
+    final int index, xFactor, yFactor;
 
-    Direction(String abbrev, int xFactor, int yFactor) {
+    Direction(int index, String abbrev, int xFactor, int yFactor) {
+        this.index = index;
         this.abbrev = abbrev;
         this.xFactor = xFactor;
         this.yFactor = yFactor;
 
     }
+
 
     Image getImage(String prefix) {
         return Tools.getImage(prefix + abbrev + ".gif");

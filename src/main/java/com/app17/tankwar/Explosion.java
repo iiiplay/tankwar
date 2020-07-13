@@ -1,34 +1,32 @@
 package com.app17.tankwar;
 
+import com.app17.tankwar.gameobject.GameObject;
+
 import java.awt.*;
 
-public class Explosion {
-    private int x, y;
+public class Explosion extends GameObject {
 
-    private int step = 0;
 
-    private boolean live = true;
-
-    boolean isLive() {
-        return live;
+    public Explosion(int x, int y, Image[] images) {
+        super(x, y, images);
+        live = true;
     }
 
-    void setLive(boolean live) {
-        this.live = live;
-    }
-
-    Explosion(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    void draw(Graphics g) {
-        if (step > 10) {
-            this.setLive(false);
+    @Override
+    public void update(Graphics g) {
+        if (++step >= images.length) {
+            live = false;
             return;
         }
-        g.drawImage(Tools.getImage(step++ + ".gif"), x, y, null);
+        draw(g);
+    }
 
+
+    @Override
+    public void draw(Graphics g) {
+        if (live) {
+            g.drawImage(images[step], x, y, null);
+        }
     }
 }
 
