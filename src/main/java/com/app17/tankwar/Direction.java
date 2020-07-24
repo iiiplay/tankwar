@@ -26,6 +26,11 @@ public enum Direction {
 
 
     Image getImage(String prefix) {
+        //新坦克造型
+        if(prefix.equals("itank") || prefix.equals("etank"))
+            return Tools.getImage("tank\\"+prefix + abbrev + ".png");
+
+        //return Tools.getImage(prefix + abbrev + ".gif");
         return Tools.getImage(prefix + abbrev + ".gif");
 
     }

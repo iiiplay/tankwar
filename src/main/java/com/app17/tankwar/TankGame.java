@@ -23,7 +23,7 @@ public class TankGame extends GameClient {
 
 
     public Image bloodImg;
-    public Image[] explosionImg = new Image[11];
+    public Image[] explosionImg = new Image[5];
     public Image[] tankImg = new Image[8];
     public Image[] enemyTankImg = new Image[8];
     public Image[] missileImg = new Image[8];
@@ -54,13 +54,13 @@ public class TankGame extends GameClient {
         setPreferredSize(new Dimension(getScreenWidth(), getScreenHeight()));
         bloodImg = Tools.getImage("blood.png");
         for (int i = 0; i < explosionImg.length; i++) {
-            explosionImg[i] = Tools.getImage(i + ".gif");
+            explosionImg[i] = Tools.getImage("blowup/" + i + ".png");
         }
 
         Direction[] direction = Direction.values();
 
         for (int i = 0; i < direction.length; i++) {
-            tankImg[i] = direction[i].getImage("tank");
+            tankImg[i] = direction[i].getImage("itank");
             enemyTankImg[i] = direction[i].getImage("etank");
             missileImg[i] = direction[i].getImage("missile");
         }
@@ -85,7 +85,7 @@ public class TankGame extends GameClient {
         enemyTanks = new CopyOnWriteArrayList<>();
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 4; j++) {
-                enemyTanks.add(new Tank(200 + j * 120, 400 + 40 * i,
+                enemyTanks.add(new Tank(200 + j * 120, 400 + 47 * i,
                         enemyTankImg, Direction.UP, true));
             }
         }
@@ -193,7 +193,6 @@ public class TankGame extends GameClient {
             }
         });
     }
-
 
 
     public List<Wall> getWalls() {

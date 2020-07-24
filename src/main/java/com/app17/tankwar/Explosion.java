@@ -10,14 +10,28 @@ public class Explosion extends GameObject {
     public Explosion(int x, int y, Image[] images) {
         super(x, y, images);
         live = true;
+        new Thread(() -> {
+            while (++step < images.length) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            live = false;
+
+        }).start();
+
+
     }
 
     @Override
     public void update(Graphics g) {
-        if (++step >= images.length) {
-            live = false;
-            return;
-        }
+
+//        if (++step >= images.length) {
+//            live = false;
+//            return;
+//        }
         draw(g);
     }
 
@@ -28,5 +42,7 @@ public class Explosion extends GameObject {
             g.drawImage(images[step], x, y, null);
         }
     }
+
+
 }
 
