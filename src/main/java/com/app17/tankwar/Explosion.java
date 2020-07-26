@@ -13,7 +13,7 @@ public class Explosion extends GameObject {
         new Thread(() -> {
             while (++step < images.length) {
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(25);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

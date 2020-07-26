@@ -32,8 +32,7 @@ public class Player extends Tank implements CamelPet {
         int width = hp * this.getImage().getWidth(null) / 100;
         g.fillRect(x, y - 10, width, 10);
 
-        g.drawImage(CamelPet.PET_IMAGE, this.x - CamelPet.PET_IMAGE.getWidth(null) - CamelPet.DISTANCE
-                , this.y, null);
+
 
         super.draw(g);
     }
@@ -42,6 +41,7 @@ public class Player extends Tank implements CamelPet {
     public void update(Graphics g) {
         determineDirection();
         super.update(g);
+        drawPet(g);
     }
 
     //偵測行走方向
@@ -120,5 +120,11 @@ public class Player extends Tank implements CamelPet {
         return new Rectangle(x - CamelPet.PET_IMAGE.getWidth(null) - CamelPet.DISTANCE, y,
                 this.getImage().getWidth(null),
                 this.getImage().getHeight(null));
+    }
+
+    @Override
+    public void drawPet(Graphics g) {
+        g.drawImage(CamelPet.PET_IMAGE, this.x - CamelPet.PET_IMAGE.getWidth(null) - CamelPet.DISTANCE
+                , this.y, null);
     }
 }

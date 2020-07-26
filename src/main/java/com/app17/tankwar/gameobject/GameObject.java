@@ -93,6 +93,4 @@ public abstract class GameObject {
         return new Rectangle(x, y, image.getWidth(null),
                 image.getHeight(null));
     }
-
-
 }

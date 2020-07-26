@@ -23,7 +23,7 @@ public class TankGame extends GameClient {
 
 
     public Image bloodImg;
-    public Image[] explosionImg = new Image[5];
+    public Image[] explosionImg = new Image[10];
     public Image[] tankImg = new Image[8];
     public Image[] enemyTankImg = new Image[8];
     public Image[] missileImg = new Image[8];
@@ -54,7 +54,7 @@ public class TankGame extends GameClient {
         setPreferredSize(new Dimension(getScreenWidth(), getScreenHeight()));
         bloodImg = Tools.getImage("blood.png");
         for (int i = 0; i < explosionImg.length; i++) {
-            explosionImg[i] = Tools.getImage("blowup/" + i + ".png");
+            explosionImg[i] = Tools.getImage( + i + ".png");
         }
 
         Direction[] direction = Direction.values();
@@ -73,10 +73,10 @@ public class TankGame extends GameClient {
 
         //將陣列轉換成集合
         walls = Arrays.asList(
-                new Wall(280, 140, wallImg, 12, true),
-                new Wall(280, 540, wallImg, 12, true),
-                new Wall(100, 180, wallImg, 12, false),
-                new Wall(700, 180, wallImg, 12, false));
+                new Wall(240, 140, wallImg, 12, true),
+                new Wall(240, 540, wallImg, 12, true),
+                new Wall(100, 160, wallImg, 12, false),
+                new Wall(700, 160, wallImg, 12, false));
 
         initEnemyTank();
     }
@@ -126,8 +126,8 @@ public class TankGame extends GameClient {
         g.drawString("Player Tank HP:" + playerTank.getHp(), 10, 90);
         g.drawString("Enemy Left:" + enemyTanks.size(), 10, 110);
         g.drawString("Enemy Killed:" + enemyKilled.get(), 10, 130);
-        g.drawImage(Tools.getImage("tree.png"), 720, 10, null);
-        g.drawImage(Tools.getImage("tree.png"), 10, 520, null);
+        g.drawImage(Tools.getImage("base.png"), 720, 10, null);
+        g.drawImage(Tools.getImage("base.png"), 10, 520, null);
 
         playerTank.update(g);
 
