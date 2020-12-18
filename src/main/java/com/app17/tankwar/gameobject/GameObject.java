@@ -23,7 +23,7 @@ public abstract class GameObject {
         enemy = false;
         live = false;
         stopped = false;
-        step = -1;
+        step = 0;
     }
 
     public int getX() {
