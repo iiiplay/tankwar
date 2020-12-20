@@ -27,11 +27,6 @@ public class Explosion extends GameObject {
 
     @Override
     public void update(Graphics g) {
-
-//        if (++step >= images.length) {
-//            live = false;
-//            return;
-//        }
         draw(g);
     }
 
